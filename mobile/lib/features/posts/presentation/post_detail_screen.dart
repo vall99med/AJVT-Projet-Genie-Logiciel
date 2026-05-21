@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../domain/post_state.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
 
 String _formatDate(String? iso, String lang) {
@@ -66,6 +68,16 @@ class PostDetailScreen extends ConsumerWidget {
                         ),
                       )
                     : null,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async {
+                      final router = GoRouter.of(context);
+                      await ref.read(authNotifierProvider.notifier).logout();
+                      router.go('/phone');
+                    },
+                  ),
+                ],
               ),
               SliverToBoxAdapter(
                 child: Padding(

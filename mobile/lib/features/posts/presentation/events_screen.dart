@@ -51,6 +51,14 @@ class EventsScreen extends ConsumerWidget {
                 onPressed: () => context.push('/event/create'),
               ),
             const LanguageToggle(),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: t.translate('logout'),
+              onPressed: () async {
+                await ref.read(authNotifierProvider.notifier).logout();
+                if (context.mounted) context.go('/phone');
+              },
+            ),
           ],
           bottom: TabBar(
             labelColor:           AppColors.primary,

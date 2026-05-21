@@ -75,6 +75,16 @@ class EventDetailScreen extends ConsumerWidget {
                         ),
                       )
                     : null,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    onPressed: () async {
+                      final router = GoRouter.of(context);
+                      await ref.read(authNotifierProvider.notifier).logout();
+                      router.go('/phone');
+                    },
+                  ),
+                ],
               ),
               SliverToBoxAdapter(
                 child: Padding(

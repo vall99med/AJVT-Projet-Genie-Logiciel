@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../domain/member_state.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../shared/widgets/language_toggle.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/app_localizations.dart';
@@ -17,7 +18,18 @@ class MemberCardScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.translate('card_title')),
-        actions: const [LanguageToggle()],
+        actions: [
+          const LanguageToggle(),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              await ref.read(authNotifierProvider.notifier).logout();
+              router.go('/phone');
+            },
+          ),
+        ],
       ),
       body: cardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

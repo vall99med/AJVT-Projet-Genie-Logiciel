@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../domain/post_state.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../shared/widgets/ajvt_button.dart';
 import '../../../shared/widgets/ajvt_text_field.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -138,7 +139,18 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(t.translate('create_event')),
-        actions: const [LanguageToggle()],
+        actions: [
+          const LanguageToggle(),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              await ref.read(authNotifierProvider.notifier).logout();
+              router.go('/phone');
+            },
+          ),
+        ],
       ),
       body: LoadingOverlay(
         isLoading: isLoading,

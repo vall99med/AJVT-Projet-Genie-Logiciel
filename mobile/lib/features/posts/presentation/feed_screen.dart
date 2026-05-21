@@ -54,6 +54,14 @@ class FeedScreen extends ConsumerWidget {
               onPressed: () => context.push('/post/create'),
             ),
           const LanguageToggle(),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: () async {
+              await ref.read(authNotifierProvider.notifier).logout();
+              if (context.mounted) context.go('/phone');
+            },
+          ),
         ],
       ),
       bottomNavigationBar: const MainNavBar(currentIndex: 0),

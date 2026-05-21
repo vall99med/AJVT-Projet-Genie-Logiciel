@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/directory_repository.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../shared/widgets/main_nav_bar.dart';
 import '../../../shared/widgets/language_toggle.dart';
 import '../../../core/constants/app_colors.dart';
@@ -105,6 +106,12 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
     _fetch();
   }
 
+  Future<void> _logout() async {
+    final router = GoRouter.of(context);
+    await ref.read(authNotifierProvider.notifier).logout();
+    router.go('/phone');
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
@@ -113,7 +120,14 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
       appBar: AppBar(
         title: Text(t.translate('directory_title')),
         automaticallyImplyLeading: false,
-        actions: const [LanguageToggle()],
+        actions: [
+          const LanguageToggle(),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: _logout,
+          ),
+        ],
       ),
       bottomNavigationBar: const MainNavBar(currentIndex: 2),
       body: Column(

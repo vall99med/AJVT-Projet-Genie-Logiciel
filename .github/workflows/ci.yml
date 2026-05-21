@@ -1,0 +1,105 @@
+name: CI — Tests AJVT
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    name: Tests Backend Django
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: ajvt_test
+          POSTGRES_USER: ajvt_user
+          POSTGRES_PASSWORD: ajvt_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Installer les dépendances
+        run: |
+          cd backend
+          pip install -r requirements/base.txt
+          pip install -r requirements/development.txt
+
+      - name: Appliquer les migrations
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: ajvt_test
+          DB_USER: ajvt_user
+          DB_PASSWORD: ajvt_password
+          SECRET_KEY: ci-secret-key-not-for-production
+          DEBUG: 'True'
+          REDIS_URL: redis://localhost:6379/0
+          TWILIO_ACCOUNT_SID: test
+          TWILIO_AUTH_TOKEN: test
+          TWILIO_PHONE_NUMBER: +15551234567
+        run: |
+          cd backend
+          python manage.py migrate
+
+      - name: Lancer les tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: ajvt_test
+          DB_USER: ajvt_user
+          DB_PASSWORD: ajvt_password
+          SECRET_KEY: ci-secret-key-not-for-production
+          DEBUG: 'True'
+          REDIS_URL: redis://localhost:6379/0
+          TWILIO_ACCOUNT_SID: test
+          TWILIO_AUTH_TOKEN: test
+          TWILIO_PHONE_NUMBER: +15551234567
+        run: |
+          cd backend
+          python test_api.py
+
+      - name: Vérification du code Django
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: ajvt_test
+          DB_USER: ajvt_user
+          DB_PASSWORD: ajvt_password
+          SECRET_KEY: ci-secret-key-not-for-production
+          DEBUG: 'True'
+          REDIS_URL: redis://localhost:6379/0
+          TWILIO_ACCOUNT_SID: test
+          TWILIO_AUTH_TOKEN: test
+          TWILIO_PHONE_NUMBER: +15551234567
+        run: |
+          cd backend
+          python manage.py check

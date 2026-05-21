@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../domain/post_state.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/app_localizations.dart';
 
@@ -70,6 +72,15 @@ class _EventAttendanceScreenState extends ConsumerState<EventAttendanceScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _load,
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              await ref.read(authNotifierProvider.notifier).logout();
+              router.go('/phone');
+            },
           ),
         ],
       ),

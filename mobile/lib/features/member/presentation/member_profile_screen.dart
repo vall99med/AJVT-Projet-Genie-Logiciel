@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/directory_repository.dart';
+import '../../auth/domain/auth_state.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/app_localizations.dart';
 
-class MemberProfileScreen extends StatefulWidget {
+class MemberProfileScreen extends ConsumerStatefulWidget {
   final int userId;
   const MemberProfileScreen({required this.userId, super.key});
 
   @override
-  State<MemberProfileScreen> createState() => _MemberProfileScreenState();
+  ConsumerState<MemberProfileScreen> createState() => _MemberProfileScreenState();
 }
 
-class _MemberProfileScreenState extends State<MemberProfileScreen> {
+class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
   final _repo = DirectoryRepository();
   Map<String, dynamic>? _member;
   bool    _isLoading = true;
@@ -49,6 +52,17 @@ class _MemberProfileScreenState extends State<MemberProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_member?['full_name'] as String? ?? t.translate('member_profile_title')),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: t.translate('logout'),
+            onPressed: () async {
+              final router = GoRouter.of(context);
+              await ref.read(authNotifierProvider.notifier).logout();
+              router.go('/phone');
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
