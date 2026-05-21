@@ -6,11 +6,35 @@ on:
   pull_request:
     branches: [ main ]
 
+# Annule les runs obsolètes sur la même branche
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Variables partagées par tous les steps — définies une seule fois
+env:
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_NAME: ajvt_test
+  DB_USER: ajvt_user
+  DB_PASSWORD: ajvt_password
+  SECRET_KEY: ci-secret-key-not-for-production
+  DEBUG: 'True'
+  REDIS_URL: redis://localhost:6379/0
+  TWILIO_ACCOUNT_SID: test
+  TWILIO_AUTH_TOKEN: test
+  TWILIO_PHONE_NUMBER: '+15551234567'
+
 jobs:
   test:
-
     name: Tests Backend Django
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    # Évite de répéter "cd backend" dans chaque step
+    defaults:
+      run:
+        working-directory: backend
 
     services:
       postgres:
@@ -42,63 +66,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python 3.12
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: |
+            backend/requirements/base.txt
+            backend/requirements/development.txt
+
+      - name: Mettre à jour pip
+        run: pip install --upgrade pip
 
       - name: Installer les dépendances
         run: |
-          cd backend
           pip install -r requirements/base.txt
           pip install -r requirements/development.txt
 
       - name: Appliquer les migrations
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: ajvt_test
-          DB_USER: ajvt_user
-          DB_PASSWORD: ajvt_password
-          SECRET_KEY: ci-secret-key-not-for-production
-          DEBUG: 'True'
-          REDIS_URL: redis://localhost:6379/0
-          TWILIO_ACCOUNT_SID: test
-          TWILIO_AUTH_TOKEN: test
-          TWILIO_PHONE_NUMBER: +15551234567
-        run: |
-          cd backend
-          python manage.py migrate
+        run: python manage.py migrate --noinput
 
       - name: Lancer les tests
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: ajvt_test
-          DB_USER: ajvt_user
-          DB_PASSWORD: ajvt_password
-          SECRET_KEY: ci-secret-key-not-for-production
-          DEBUG: 'True'
-          REDIS_URL: redis://localhost:6379/0
-          TWILIO_ACCOUNT_SID: test
-          TWILIO_AUTH_TOKEN: test
-          TWILIO_PHONE_NUMBER: +15551234567
-        run: |
-          cd backend
-          python test_api.py
+        run: python test_api.py
 
       - name: Vérification du code Django
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: ajvt_test
-          DB_USER: ajvt_user
-          DB_PASSWORD: ajvt_password
-          SECRET_KEY: ci-secret-key-not-for-production
-          DEBUG: 'True'
-          REDIS_URL: redis://localhost:6379/0
-          TWILIO_ACCOUNT_SID: test
-          TWILIO_AUTH_TOKEN: test
-          TWILIO_PHONE_NUMBER: +15551234567
-        run: |
-          cd backend
-          python manage.py check
+        run: python manage.py check
