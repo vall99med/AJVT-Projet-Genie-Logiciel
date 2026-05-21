@@ -2,8 +2,8 @@
 # AJVT — Racine du monorepo
 # =============================================================
 
-
-                                                                                                                                          .claude/
+# Claude Code — fichiers de session locaux
+.claude/
 
 # Variables d'environnement (secrets)
 .env
@@ -23,4 +23,4 @@ ehthumbs.db
 *~
 
 
-                                                                                                    CLAUDE.md
+CLAUDE.md
