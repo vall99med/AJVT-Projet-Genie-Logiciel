@@ -24,6 +24,7 @@ env:
   TWILIO_ACCOUNT_SID: test
   TWILIO_AUTH_TOKEN: test
   TWILIO_PHONE_NUMBER: '+15551234567'
+  ALLOWED_HOSTS: localhost,127.0.0.1
 
 jobs:
   test:
