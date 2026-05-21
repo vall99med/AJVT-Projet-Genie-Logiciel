@@ -1,0 +1,146 @@
+@base_url = http://localhost:8000/api
+
+### 1. Demander un OTP (Mauritanie)
+POST {{base_url}}/auth/request-otp/
+Content-Type: application/json
+
+{"phone": "+22212345678"}
+
+###
+
+### 2. Demander un OTP (France — membre à l'étranger)
+POST {{base_url}}/auth/request-otp/
+Content-Type: application/json
+
+{"phone": "+33612345678"}
+
+###
+
+### 3. Vérifier l'OTP (remplace 123456 par le code affiché dans la console)
+POST {{base_url}}/auth/verify-otp/
+Content-Type: application/json
+
+{"phone": "+22212345678", "code": "602840"}
+
+###
+
+### 4. Créer le PIN
+POST {{base_url}}/auth/set-pin/
+Content-Type: application/json
+
+{"phone": "+22212345678", "pin": "1234", "pin_confirm": "1234"}
+
+###
+
+### 5. Connexion
+POST {{base_url}}/auth/login/
+Content-Type: application/json
+
+{"phone": "+22200000000", "pin": "0000"}
+
+###
+
+### 6. Réinitialiser PIN — étape 1 (envoie un nouvel OTP)
+POST {{base_url}}/auth/reset-pin/request/
+Content-Type: application/json
+
+{"phone": "+22212345678"}
+
+###
+
+### 7. Réinitialiser PIN — étape 2 (confirme OTP + nouveau PIN)
+POST {{base_url}}/auth/reset-pin/confirm/
+Content-Type: application/json
+
+{"phone": "+22212345678", "code": "123456", "pin": "5678", "pin_confirm": "5678"}
+
+###
+
+### 8. Test numéro invalide — sans indicatif (doit retourner 400)
+POST {{base_url}}/auth/request-otp/
+Content-Type: application/json
+
+{"phone": "12345678"}
+
+###
+
+### 9. Test PIN non numérique (doit retourner 400)
+POST {{base_url}}/auth/set-pin/
+Content-Type: application/json
+
+{"phone": "+22212345678", "pin": "abcd", "pin_confirm": "abcd"}
+
+###
+
+### 10. Test PIN non concordants (doit retourner 400)
+POST {{base_url}}/auth/set-pin/
+Content-Type: application/json
+
+{"phone": "+22212345678", "pin": "1234", "pin_confirm": "5678"}
+
+###
+
+# =============================================================
+# MEMBRES (BF-01, BF-03, BF-04)
+# =============================================================
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc5MTQ0NjYxLCJpYXQiOjE3NzkwNTgyNjEsImp0aSI6ImQ1OWUzM2NiOTU1NjRiZjU5NDg5M2NjYTBkZDA4MWNiIiwidXNlcl9pZCI6MX0.bWVEAwu657ZIlmRB_FDHOsB1CrUZtEuyuoiWK5fkphU.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc5MTQ0Mzk2LCJpYXQiOjE3NzkwNTc5OTYsImp0aSI6ImEzZmRmYzMwMzc4MDRkZGZhZWIwYzRjZDQ1NmY1YjIwIiwidXNlcl9pZCI6Mn0.pWc2z87ZH9UEB27BJRRT2ec4uMDheIXWxpSGxAU2LDg
+### 11. Inscription membre
+POST {{base_url}}/members/register/
+Content-Type: application/json
+
+{
+  "phone": "+22212345678",
+  "full_name": "Ahmed Ould Mohamed",
+  "situation": "student",
+  "specialty": "Informatique",
+  "study_level": "Licence 3",
+  "neighborhood": "Tevragh Zeina"
+}
+
+###
+
+### 12. Liste membres en attente (admin requis)
+GET {{base_url}}/members/pending/
+Authorization: Bearer {{token}}
+
+###
+
+### 13. Approuver un membre (remplace 1 par l'id réel)
+PATCH {{base_url}}/members/1/validate/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"action": "approve"}
+
+###
+
+### 14. Rejeter un membre
+PATCH {{base_url}}/members/2/validate/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"action": "reject", "rejection_reason": "Informations incomplètes."}
+
+###
+
+### 15. Mon profil
+GET {{base_url}}/members/me/
+Authorization: Bearer {{token}}
+
+###
+
+### 16. Modifier mon profil (PATCH partiel)
+PATCH {{base_url}}/members/me/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"neighborhood": "Ksar", "job_title": "Développeur"}
+
+###
+
+### 17. Annuaire membres actifs
+GET {{base_url}}/members/
+Authorization: Bearer {{token}}
+
+###

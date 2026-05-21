@@ -1,0 +1,67 @@
+name: ajvt
+description: "Plateforme numérique - Association des Jeunes"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # HTTP
+  dio: ^5.4.0
+
+  # Stockage sécurisé (JWT)
+  flutter_secure_storage: ^9.0.0
+
+  # Cache local
+  shared_preferences: ^2.2.2
+
+  # PIN et OTP input
+  pinput: ^3.0.0
+
+  # Images réseau avec cache
+  cached_network_image: ^3.3.1
+
+  # Internationalisation
+  intl: ^0.20.0
+
+  # Variables d'environnement
+  flutter_dotenv: ^5.1.0
+
+  # Icons
+  flutter_svg: ^2.0.9
+
+  # Sélection et capture de photos (reçus de paiement)
+  image_picker: ^1.0.7
+
+  # Ouvrir des URLs externes (WhatsApp, appel, etc.)
+  url_launcher: ^6.2.5
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.7
+  riverpod_generator: ^2.3.9
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/images/
+    - assets/translations/
+    - .env

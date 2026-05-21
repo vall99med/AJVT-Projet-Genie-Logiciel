@@ -1,0 +1,70 @@
+# =============================================================
+# AJVT Mobile — Flutter / Dart
+# =============================================================
+
+# Variables d'environnement (URL API, config locale)
+.env
+
+# Flutter — fichiers générés
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Artefacts de build Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle/
+/android/captures/
+
+# iOS — générés et dépendances
+**/Pods/
+**/DerivedData/
+**/xcuserdata/
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Flutter/App.framework
+**/Flutter/Flutter.framework
+**/Flutter/Flutter.podspec
+**/Flutter/app.flx
+**/Flutter/app.zip
+**/Flutter/flutter_assets/
+**/ios/Flutter/.last_build_id
+Runner/GeneratedPluginRegistrant.*
+
+# Keystore Android (ne jamais committer)
+key.properties
+**/*.keystore
+**/*.jks
+/android/local.properties
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Symbolisation & obfuscation
+app.*.symbols
+app.*.map.json
+
+# Divers
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.history
+.svn/
+.swiftpm/
+.atom/
+.build/
+.buildlog/
+.sconsign.dblite
+migrate_working_dir/
+**/doc/api/
