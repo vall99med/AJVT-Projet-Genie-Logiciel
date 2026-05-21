@@ -86,6 +86,12 @@ jobs:
       - name: Appliquer les migrations
         run: python manage.py migrate --noinput
 
+      - name: Démarrer le serveur Django
+        run: |
+          python manage.py runserver 0.0.0.0:8000 &
+          timeout 30 bash -c 'until nc -z localhost 8000; do sleep 1; done'
+          echo "Serveur Django prêt sur :8000"
+
       - name: Lancer les tests
         run: python test_api.py
 
